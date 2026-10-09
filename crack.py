@@ -1,5 +1,24 @@
 # CAESAR CIPHER CRACKER
 
+import string
+
+# FOR COMMON WORD LOCAL LOOKUP
+COMMON_WORDS = {
+    "THE", "BE", "TO", "OF", "AND", "A", "IN", "THAT", "HAVE", "I",
+    "IT", "FOR", "NOT", "ON", "WITH", "HE", "AS", "YOU", "DO", "AT",
+    "THIS", "BUT", "HIS", "BY", "FROM", "THEY", "WE", "SAY", "HER",
+    "SHE", "OR", "AN", "WILL", "MY", "ONE", "ALL", "WOULD", "THERE",
+    "THEIR", "WHAT", "SO", "UP", "OUT", "IF", "ABOUT", "WHO", "GET",
+    "WHICH", "GO", "ME", "WHEN", "MAKE", "CAN", "LIKE", "TIME", "NO",
+    "JUST", "HIM", "KNOW", "TAKE", "PEOPLE", "INTO", "YEAR", "YOUR",
+    "GOOD", "SOME", "COULD", "THEM", "SEE", "OTHER", "THAN", "THEN",
+    "NOW", "LOOK", "ONLY", "COME", "ITS", "OVER", "THINK", "ALSO",
+    "BACK", "AFTER", "USE", "TWO", "HOW", "OUR", "WORK", "FIRST",
+    "WELL", "WAY", "EVEN", "NEW", "WANT", "BECAUSE", "ANY", "THESE",
+    "GIVE", "DAY", "MOST", "US", "HELLO", "WORLD", "CAT", "DOG",
+    "QUICK", "BROWN", "FOX", "JUMPS", "LAZY"
+}
+
 # FUNCTION TO DECRYPT UPPER CHARACTER
 def decrypt_upper_char(char, key):
 	shifted_number = (ord(char) - ord("A") - key) % 26	# HERE WE CONVERT THE CHARACTERS TO NUMBERS, SUBTRACT THE KEY AND THEN BACK TO CHAR
@@ -33,6 +52,7 @@ def decrypt_text(cipher, key):
 
 # FUNCTION FOR SCORING SYSTEM
 def score_text(text):
+	# FREQUENCY ANALYSIS (FOR LONGER TEXTS)
 	common = "ETAOINSHRD"	# DEFINE COMMON AND RARE LETTERS TO BE EVALUATED
 	rare = "JKQXZ"
 
@@ -46,7 +66,22 @@ def score_text(text):
 		elif char_upper in rare:
 			score -= 1	# SUBTRACT 1 IF RARE
 
+	# DICTIONARY LOOKUP (FOR SHORTER TEXTS)
+	raw_words = text.split()	# SPLITS SENTENCE INTO SEPERATES INDIVIDUAL WORDS
+
+	# PUNCTUATION TABLE TO GET RID OF PUNCTUATIONS IN WORDS; FIRST: CHARACTERS TO BE REPLACED, SECOND: CHARACTERS TO BE REPLACED WITH, THIRD: CHARACTERS TO BE DELETED
+	punct_table = str.maketrans("", "", string.punctuation)
+
+	for word in raw_words:
+		# REMOVE PUNCTUATIONS FROM EACH WORD WITH TABLE
+		clean_word = word.translate(punct_table).upper()
+
+		# COMOPARE WITH LOCAL COMMON WORD DATABASE; AWARD 50 PTS IF PRESENT
+		if clean_word in COMMON_WORDS:
+			score += 50
 	return score
+
+
 
 # MAIN FUNCTION TO GUESS AND CRACK
 def crack_caesar(ciphertext):
@@ -66,6 +101,7 @@ def crack_caesar(ciphertext):
 
 
 # encrypted_message = "Qeb nrfzh yoltk clu grjmp lsbo qeb ixwv ald." (used for testing)
+# "Khoor"
 
 print('='*12, "CAESAR CIPHER CRACKER (DOUBLE DEZZ)", '='*12)
 
